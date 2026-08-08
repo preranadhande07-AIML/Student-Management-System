@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Student Management System</h1>
+        <p>Manage student records easily</p>
+    </header>
+
+    <main class="container">
+        <section class="card">
+            <h2>Add Student</h2>
+            <form id="studentForm">
+                <input type="text" id="name" placeholder="Student Name" required>
+                <input type="text" id="roll" placeholder="Roll Number" required>
+                <input type="text" id="branch" placeholder="Branch" required>
+                <input type="number" id="marks" placeholder="Marks" min="0" max="100" required>
+                <button type="submit">Add Student</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Student Records</h2>
+            <input type="text" id="search" placeholder="Search by name or roll number">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Roll No.</th>
+                            <th>Branch</th>
+                            <th>Marks</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTable"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Student Management System | Git Assignment</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+# Student Management System
+
+## About the Project
+A simple web-based Student Management System created using HTML, CSS, and JavaScript.
+
+## Features
+- Add student records
+- Store student name, roll number, branch, and marks
+- Search students by name or roll number
+- Delete student records
+- Data is saved in the browser using localStorage
+- Responsive interface
+
+## Technologies Used
+- HTML5
+- CSS3
+- JavaScript
+
+## How to Run
+1. Download or clone the repository.
+2. Open `index.html` in a web browser.
+3. Add and manage student records.
+
+## Git Commands Used
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin YOUR_GITHUB_REPOSITORY_URL
+git push -u origin main
+```
+
+const form = document.getElementById("studentForm");
+const table = document.getElementById("studentTable");
+const search = document.getElementById("search");
+
+let students = JSON.parse(localStorage.getItem("students")) || [];
+
+function saveStudents() {
+    localStorage.setItem("students", JSON.stringify(students));
+}
+
+function displayStudents(list = students) {
+    table.innerHTML = "";
+
+    if (list.length === 0) {
+        table.innerHTML = '<tr><td colspan="5">No student records found.</td></tr>';
+        return;
+    }
+
+    list.forEach((student, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${student.name}</td>
+            <td>${student.roll}</td>
+            <td>${student.branch}</td>
+            <td>${student.marks}</td>
+            <td>
+                <button class="delete-btn" onclick="deleteStudent(${index})">Delete</button>
+            </td>
+        `;
+        table.appendChild(row);
+    });
+}
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const student = {
+        name: document.getElementById("name").value.trim(),
+        roll: document.getElementById("roll").value.trim(),
+        branch: document.getElementById("branch").value.trim(),
+        marks: document.getElementById("marks").value
+    };
+
+    students.push(student);
+    saveStudents();
+    displayStudents();
+    form.reset();
+});
+
+function deleteStudent(index) {
+    students.splice(index, 1);
+    saveStudents();
+    displayStudents();
+}
+
+search.addEventListener("input", function() {
+    const query = search.value.toLowerCase();
+
+    const filtered = students.filter(student =>
+        student.name.toLowerCase().includes(query) ||
+        student.roll.toLowerCase().includes(query)
+    );
+
+    displayStudents(filtered);
+});
+
+displayStudents();
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+}
+
+header {
+    text-align: center;
+    padding: 30px 15px;
+    background: #243447;
+    color: white;
+}
+
+header h1 {
+    margin: 0 0 8px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 25px auto;
+    padding: 0 15px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+input, button {
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+button {
+    background: #243447;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+#search {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #eef1f4;
+}
+
+.delete-btn {
+    padding: 7px 10px;
+    background: #c0392b;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+@media (max-width: 650px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+}
